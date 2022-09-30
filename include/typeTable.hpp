@@ -21,7 +21,6 @@ namespace pl::symbol {
 constexpr char SYMBOL_ADD = '+';
 constexpr char SYMBOL_ASSIGN = '=';
 constexpr std::string_view SYMBOL_ECHO = "echo";
-
 }  // namespace pl::symbol
 
 /**
@@ -32,7 +31,7 @@ namespace pl::types {
 
 /**
  * @brief pl语言可用的类型
- *
+ * 指代token中所有的类型
  */
 enum class TYPES {
     /**
@@ -75,7 +74,8 @@ enum class TYPES {
 struct Token {
     pl::types::TYPES type;
     std::string data;
-    size_t tokenIndex;
+    size_t row,column;
+    size_t index;
 };
 
 }  // namespace pl::types

@@ -32,6 +32,9 @@ class Lex {
      */
     std::vector<pl::types::Token> start();
 
+    std::string getErrorInfo() const;
+    inline bool good() const { return !_failed; }
+
    private:
     char _peekNext() const;
     char _peek() const;
@@ -44,8 +47,12 @@ class Lex {
     bool _isKeyWordContains(char c) const;
 
    private:
+    bool _failed;
+    pl::types::Token _failedToken;
+
     std::string_view _input;
     size_t _index;
+    size_t _row, _column;
     std::string _tokenStringBuffer;
     pl::types::TYPES _currentTokenType;
 

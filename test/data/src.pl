@@ -1,4 +1,4 @@
-a = 10b = a+1echo a
+a =     10b = a+1echo a
 echo b
 b=a+aaa = 10b = a+1echo a
 echo b
@@ -17,7 +17,7 @@ echo b
 
 b=a+aaa = 10b = a+1echo a
 echo b
-b=a+aaa = 10b = a+1echo a
+b=a+cccc = 10b = a+1echo a
 echo b
 b=a+aaa = 10b = a+1echo a
 echo b
@@ -63,5 +63,8 @@ fsdf
 +fsddfsds
 a
 =
-ss
-sfsd
+ss + 
+sfsdffffffffffffffffffffffa
+
+
+g+echoa

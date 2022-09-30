@@ -10,6 +10,7 @@
 #include "lex.hpp"
 
 #include <cassert>
+#include <sstream>
 
 using namespace std;
 namespace pl::lex {
@@ -22,6 +23,7 @@ std::vector<pl::types::Token> Lex::start(string_view inputString) {
     return start();
 }
 std::vector<pl::types::Token> Lex::start() {
+    // DFA解析inputString
     vector<pl::types::Token> resultTokenList{};
     pl::types::Token token{};
     size_t inputLen{_input.length()};
@@ -29,19 +31,34 @@ std::vector<pl::types::Token> Lex::start() {
     DFA_TYPE state{DFA_TYPE::START};
 
     _index = size_t{};
+    _row = _column = size_t{};
+    _failed = false;
 
     auto creativeNewToken = [&](pl::types::TYPES tokenType) {
         if (_tokenStringBuffer.empty())
             return;
         token.type = tokenType;
         token.data = _tokenStringBuffer;
-        token.tokenIndex = _index;
+        token.column = _column - 2;
+        token.row = _row;
+        token.index = _index;
         resultTokenList.push_back(token);
     };
     auto setDFA = [&](DFA_TYPE dfaState) { state = dfaState; };
+    auto increaseRow = [&]() {
+        if (_peek() == '\n') {
+            ++_row;
+            _column = 0;
+        }
+    };
     auto accept = [&]() {
         _tokenStringBuffer.push_back(_peek());
         ++_index;
+        ++_column;
+    };
+    auto ignored = [&]() {
+        ++_index;
+        ++_column;
     };
 
     do {
@@ -74,8 +91,9 @@ std::vector<pl::types::Token> Lex::start() {
                 } else if (_isEOF(_peek())) {
                     setDFA(DFA_TYPE::END);
                 } else if (isspace(_peek())) {
+                    increaseRow();
                     setDFA(DFA_TYPE::EMPTY_CHAR);
-                    accept();
+                    ignored();
                 } else if (_isSymbol(_peek())) {
                     if (_peek() == pl::symbol::SYMBOL_ADD) {
                         setDFA(DFA_TYPE::END_ADD);
@@ -91,23 +109,11 @@ std::vector<pl::types::Token> Lex::start() {
 
             case DFA_TYPE::EMPTY_CHAR: {
                 if (isspace(_peek())) {
-                    accept();
-                } else
+                    increaseRow();
+                    ignored();
+                } else {
                     setDFA(DFA_TYPE::START);
-                // if (_isEOF(_peek())) {
-                //     setDFA(DFA_TYPE::END_OF_FILE);
-                // } else if (_isNumber(_peek())) {
-                //     setDFA(DFA_TYPE::NUM);
-                //     accept();
-                // } else if (_isAlphabetOrUnderLine(_peek())) {
-                //     if (_isKeyWordContains(_peek())) {
-                //         setDFA(DFA_TYPE::ALPHABET_OPT_NUM_WITH_KEY);
-                //         accept();
-                //     } else {
-                //         setDFA(DFA_TYPE::ALPHABET_NO_KEY);
-                //         accept();
-                //     }
-                // }
+                }
             } break;
 
             case DFA_TYPE::NUM: {
@@ -178,7 +184,10 @@ std::vector<pl::types::Token> Lex::start() {
             } break;
 
             case DFA_TYPE::INVALID_CHAR: {
+                accept();
                 creativeNewToken(pl::types::TYPES::LEX_ERROR);
+                _failed = true;
+                _failedToken = resultTokenList.back();
                 setDFA(DFA_TYPE::END);
             } break;
 
@@ -191,8 +200,26 @@ std::vector<pl::types::Token> Lex::start() {
             break;
     } while (_index <= inputLen);
 
-    // DFA解析inputString
+    if (_failed) {
+        resultTokenList.clear();
+        resultTokenList.push_back(_failedToken);
+    }
+
     return resultTokenList;
+}
+
+string Lex::getErrorInfo() const {
+    string errmsg;
+    stringstream ss(string{_input}, ios::in);
+    for (size_t lineIndex = 0; lineIndex < _failedToken.row + 1; ++lineIndex)
+        getline(ss, errmsg);
+
+    string errLineString = to_string(_failedToken.row + 1) + ": ";
+    errmsg = errLineString + errmsg + '\n';
+    errmsg +=
+        string(errLineString.length() + _failedToken.column, ' ') + "^\n"s;
+    errmsg += "Error: Unrecognized token `"s + _failedToken.data + "`\n"s;
+    return errmsg;
 }
 
 char Lex::_peekNext() const {
