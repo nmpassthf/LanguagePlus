@@ -44,6 +44,7 @@ void test() {
     // 解析失败， 末尾元素返回ERROR类型
     if (!lex.good()) {
         qInfo() << lex.getErrorInfo().c_str();
+        return;
     }
 
     pl::parser::Parser parser(l);
@@ -53,6 +54,11 @@ void test() {
                  qInfo() << codeLine.toString().c_str();
              });
 
-    if (!parser.good())
+    if (!parser.good()) {
         qInfo() << parser.getErrorInfo(data).c_str();
+        return;
+    }
+
+    pl::executer::Executer exec;
+    exec.exec(asmCode);
 }

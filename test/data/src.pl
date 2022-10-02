@@ -1,3 +1,4 @@
-a = 1@
+a = 1
 b = a +2
-a +++++++-
+echo b
+echo a
