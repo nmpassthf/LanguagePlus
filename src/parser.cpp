@@ -223,6 +223,18 @@ std::string Parser::_parseAdd() {
                 return expressId;
             }
         } else if (thisChar.type == TYPES::ID) {
+            if (!_isInTable(expressId)) {
+                _failed = true;
+                _failedToken = _peek();
+                _failedReason = ParserError::UNDEFINED_ID;
+                return {};
+            }
+            if (!_isInTable(thisChar.data)) {
+                _failed = true;
+                _failedToken = thisChar;
+                _failedReason = ParserError::UNDEFINED_ID;
+                return {};
+            }
             if (!_isInTempTable(expressId) && !_isInTempTable(thisChar.data)) {
                 string tempId{_getTempId()};
                 _tempContainer[tempId] = _container[thisChar.data];
