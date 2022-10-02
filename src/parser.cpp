@@ -31,13 +31,14 @@ std::vector<pl::types::Command> Parser::parseAndGenCode(
     return parseAndGenCode();
 }
 std::vector<pl::types::Command> Parser::parseAndGenCode() {
-    _genCodeList.clear();
-    _failed = false;
-    _failedToken = {};
+    _currentToken = 0;
 
     _container.clear();
     _tempContainer.clear();
-    _currentToken = 0;
+
+    _genCodeList.clear();
+    _failed = false;
+    _failedToken = {};
 
     _formattedString = {};
 
@@ -95,6 +96,7 @@ void Parser::_parse() {
     string sourceCodeFormattedPiece;
 
     while (_peek() != Token{} && !_failed) {
+        sourceCodeFormattedPiece.clear();
         if (_peek().type == TYPES::ECHO) {
             _accept();
             _parseEcho();
@@ -103,7 +105,7 @@ void Parser::_parse() {
         }
 
         // 解析完成了一整条语句
-        for (auto i = last; i < _currentToken; ++i)
+        for (auto i = last; i < _currentToken && i < _tokenList.size(); ++i)
             sourceCodeFormattedPiece += _tokenList[i].data + " ";
         _formattedString.push_back(sourceCodeFormattedPiece);
         last = _currentToken;
@@ -132,7 +134,8 @@ void Parser::_parseAssign() {
         _accept();
         if (_peek() == Token{}) {
             _failed = true;
-            _failedToken = _tokenList[_currentToken - 1];
+            _failedToken =
+                _tokenList[min(_currentToken - 1, _tokenList.size() - 1)];
             _failedReason = ParserError::MISSING_ID_IN_ASSIGN;
             return;
         }
@@ -256,7 +259,7 @@ std::string Parser::_parseAdd() {
 }
 
 std::string Parser::_getTempId() {
-    auto tempNum = _tempContainer.size();
+    static auto tempNum{0};
     while (_container.contains(string{"temp_ID_"} + to_string(tempNum)))
         ++tempNum;
     _tempContainer.insert(makePair(string{"temp_ID_"} + to_string(tempNum), 0));

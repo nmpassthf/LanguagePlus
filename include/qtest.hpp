@@ -1,13 +1,13 @@
-﻿/**
- * @file qtest.hpp
- * @author nmpassthf (nmpassthf@gmail.com)
- * @brief qt测试页
- * @date 2022-10-02
- *
- * @copyright Copyright (c) nmpassthf 2022
- *
- */
+﻿// /**
+//  * @file qtest.hpp
+//  * @author nmpassthf (nmpassthf@gmail.com)
+//  * @brief qt测试页
+//  * @date 2022-10-02
+//  *
+//  * @copyright Copyright (c) nmpassthf 2022
+//  *
+//  */
 
-#pragma once
+// #pragma once
 
-void test();
+// void test();

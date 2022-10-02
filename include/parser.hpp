@@ -41,14 +41,14 @@ class Parser {
     std::vector<pl::types::Token> _tokenList;
     size_t _currentToken;
 
-    pl::container::KeyValContainer _container, _tempContainer;
+    pl::container::KeyValContainer _container{}, _tempContainer{};
 
-    std::vector<pl::types::Command> _genCodeList;
+    std::vector<pl::types::Command> _genCodeList{};
     bool _failed;
     pl::types::Token _failedToken;
     pl::types::ParserError _failedReason;
 
-    std::vector<std::string> _formattedString;
+    std::vector<std::string> _formattedString{};
 
    private:
     inline pl::types::Token _peek() const {

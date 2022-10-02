@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include "container.hpp"
@@ -11,11 +12,12 @@ class Executer {
     Executer();
     ~Executer();
 
-    void exec(const std::vector<pl::types::Command> &commands);
+    std::string exec(const std::vector<pl::types::Command>& commands);
 
    private:
     pl::container::KeyValContainer kv;
 
-    size_t& getValue(std::pair<pl::types::OpNumberType, std::string> value);
+
+    std::string getFinalId(std::pair<pl::types::OpNumberType, std::string> value);
 };
 }  // namespace pl::executer

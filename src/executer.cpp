@@ -22,23 +22,41 @@ namespace pl::executer {
 Executer::Executer() {}
 Executer::~Executer() {}
 
-void Executer::exec(const std::vector<pl::types::Command>& commands) {
+std::string Executer::exec(const std::vector<pl::types::Command>& commands) {
+    string result{};
+
     kv.clear();
 
     for_each(
         commands.cbegin(), commands.cend(), [&](const pl::types::Command& cmd) {
             switch (cmd.operation) {
                 case pl::types::OpCode::ADD:
-                    getValue(cmd.operationNumberDest) +=
-                        getValue(cmd.operationNumberSrc);
+                    kv[getFinalId(cmd.operationNumberDest)] =
+                        get<size_t>(kv[getFinalId(cmd.operationNumberDest)]) +
+                        (cmd.operationNumberSrc.first ==
+                                 pl::types::OpNumberType::INT
+                             ? stoull(cmd.operationNumberSrc.second)
+                             : get<size_t>(
+                                   kv[getFinalId(cmd.operationNumberSrc)]));
                     break;
                 case pl::types::OpCode::ECHO:
-                    cout << getValue(cmd.operationNumberSrc) << endl;
+                    result += to_string(
+                        get<size_t>(kv[getFinalId(cmd.operationNumberSrc)]));
+                    result += "\n";
+                    cout << get<size_t>(kv[getFinalId(cmd.operationNumberSrc)])
+                         << endl;
                     break;
                 case pl::types::OpCode::MOV:
                     if (kv.contains(cmd.operationNumberDest.second)) {
-                        getValue(cmd.operationNumberDest) =
-                            getValue(cmd.operationNumberSrc);
+                        if (cmd.operationNumberSrc.first ==
+                            pl::types::OpNumberType::INT) {
+                            kv[getFinalId(cmd.operationNumberDest)] =
+                                stoull(cmd.operationNumberSrc.second);
+                        } else {
+                            kv[getFinalId(cmd.operationNumberDest)] =
+                                get<size_t>(
+                                    kv[getFinalId(cmd.operationNumberSrc)]);
+                        }
                     } else {
                         if (cmd.operationNumberSrc.first ==
                             pl::types::OpNumberType::INT) {
@@ -46,8 +64,10 @@ void Executer::exec(const std::vector<pl::types::Command>& commands) {
                                 cmd.operationNumberDest.second,
                                 stoull(cmd.operationNumberSrc.second)));
                         } else {
-                            kv.insert(makePair(cmd.operationNumberDest.second,
-                                               cmd.operationNumberSrc.second));
+                            kv.insert(
+                                makePair(cmd.operationNumberDest.second,
+                                         get<size_t>(kv[getFinalId(
+                                             cmd.operationNumberSrc)])));
                         }
                     }
                     break;
@@ -56,15 +76,16 @@ void Executer::exec(const std::vector<pl::types::Command>& commands) {
                     break;
             }
         });
+    return result;
 }
 
-size_t& Executer::getValue(
+std::string Executer::getFinalId(
     std::pair<pl::types::OpNumberType, std::string> value) {
     string newValue{value.second};
     while (kv[newValue].index() == 1) {
         newValue = get<string>(kv[newValue]);
     }
-    return get<size_t>(kv[newValue]);
+    return newValue;
 }
 
 }  // namespace pl::executer
