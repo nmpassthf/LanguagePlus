@@ -209,6 +209,8 @@ std::vector<pl::types::Token> Lex::start() {
 }
 
 string Lex::getErrorInfo() const {
+    if (!_failed)
+        return string{};
     string errmsg;
     stringstream ss(string{_input}, ios::in);
     for (size_t lineIndex = 0; lineIndex < _failedToken.row + 1; ++lineIndex)

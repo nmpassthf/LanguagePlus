@@ -17,20 +17,21 @@ class Lex {
     ~Lex();
 
     /**
-     * @brief start lex
+     * @brief 启动词法分析
      *
      * @param inputString 使用此参数的值进行词法解析
      * 注意此函数将覆写构造函数中的字符串view
      *
      * @return std::vector<pl::types::Token>
      */
-    std::vector<pl::types::Token> start(std::string_view inputString);
+    [[nodiscard]] std::vector<pl::types::Token> start(
+        std::string_view inputString);
     /**
-     * @brief start lex
+     * @brief 启动词法分析
      *
      * @return std::vector<pl::types::Token>
      */
-    std::vector<pl::types::Token> start();
+    [[nodiscard]] std::vector<pl::types::Token> start();
 
     std::string getErrorInfo() const;
     inline bool good() const { return !_failed; }
