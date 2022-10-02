@@ -1,7 +1,5 @@
 ﻿#include "qtest.hpp"
 
-#include "pluslanguage.hpp"
-
 #include <QCoreApplication>
 #include <QDebug>
 #include <QElapsedTimer>
@@ -12,6 +10,8 @@
 #include <ranges>
 #include <sstream>
 #include <string>
+
+#include "pluslanguage.hpp"
 
 using namespace std;
 void test() {
@@ -33,7 +33,7 @@ void test() {
     pl::lex::Lex lex{data};
     auto l = lex.start();
 
-    qInfo() << "输入数据为->\n" << data.c_str();
+    qInfo() << "输入数据为->" << ("\n" + data).c_str();
     size_t tokenCount{0};
     qInfo() << "输出token为->";
     for_each(l.cbegin(), l.cend(), [&](pl::types::Token token) {
@@ -45,4 +45,14 @@ void test() {
     if (!lex.good()) {
         qInfo() << lex.getErrorInfo().c_str();
     }
+
+    pl::parser::Parser parser(l);
+    auto asmCode = parser.parseAndGenCode();
+    for_each(asmCode.cbegin(), asmCode.cend(),
+             [&](const pl::types::Command& codeLine) {
+                 qInfo() << codeLine.toString().c_str();
+             });
+
+    if (!parser.good())
+        qInfo() << parser.getErrorInfo(data).c_str();
 }

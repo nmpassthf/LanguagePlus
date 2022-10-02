@@ -14,7 +14,7 @@
 #include <variant>
 
 /**
- * @brief pl语言的符号命名空间
+ * @brief Plus Language 解释器的符号模块命名空间
  *
  */
 namespace pl::symbol {
@@ -24,7 +24,7 @@ constexpr std::string_view SYMBOL_ECHO = "echo";
 }  // namespace pl::symbol
 
 /**
- * @brief pl语言的类型命名空间
+ * @brief Plus Language 解释器的类型模块命名空间
  *
  */
 namespace pl::types {
@@ -62,7 +62,7 @@ enum class TYPES {
     ECHO,
     /**
      * @brief pl语言中词法分析产生错误的类型
-     * 
+     *
      */
     LEX_ERROR,
 };
@@ -74,8 +74,71 @@ enum class TYPES {
 struct Token {
     pl::types::TYPES type;
     std::string data;
-    size_t row,column;
+    size_t row, column;
     size_t index;
+
+    inline bool operator==(const Token&) const = default;
+    inline uint64_t toUi64() { return stoull(data); }
+};
+
+/**
+ * @brief 操作符的枚举类型
+ * 源操作数1, [源操作数2] -> 目的操作数
+ */
+enum class OpCode {
+    /**
+     * @brief 赋值或加载值
+     * mov dest src;
+     * src 必须为ID类型
+     */
+    MOV,
+    /**
+     * @brief 加法
+     * add dest src;
+     * dest必须为ID类型
+     */
+    ADD,
+    /**
+     * @brief 输出命令
+     * echo src
+     * src 必须为ID类型
+     */
+    ECHO
+};
+inline std::string_view opCodeToString(OpCode code) {
+    switch (code) {
+        case OpCode::ADD:
+            return "ADD";
+            break;
+
+        case OpCode::ECHO:
+            return "ECHO";
+            break;
+        case OpCode::MOV:
+            return "MOV";
+            break;
+        default:
+            return {};
+            break;
+    }
+};
+enum class OpNumberType { INT, ID };
+struct Command {
+    OpCode operation;
+    std::pair<OpNumberType, std::string> operationNumberDest,
+        operationNumberSrc;
+
+    inline bool operator==(const Command&) const = default;
+    inline std::string toString() const {
+        return std::string{opCodeToString(operation)} + " " +
+               operationNumberDest.second + " " + operationNumberSrc.second;
+    }
+};
+enum class ParserError {
+    UNDEFINED_ID,
+    MISSING_ID_IN_ASSIGN,
+    MISSING_VALUE_AFTER_OPERATOR_PLUS,
+    MISSING_VALUE_BEFOR_OPERATOR_PLUS
 };
 
 }  // namespace pl::types

@@ -10,6 +10,11 @@
  *
  */
 namespace pl::lex {
+/**
+ * @brief pl解释器的lex模块
+ * 将输入的字符串分割为一个个token
+ *
+ */
 class Lex {
    public:
     explicit Lex(std::string_view inputString);
@@ -37,17 +42,6 @@ class Lex {
     inline bool good() const { return !_failed; }
 
    private:
-    char _peekNext() const;
-    char _peek() const;
-    char _last() const;
-    char _first() const;
-    bool _isEOF(char c) const;
-    bool _isAlphabetOrUnderLine(char c) const;
-    bool _isNumber(char c) const;
-    bool _isSymbol(char c) const;
-    bool _isKeyWordContains(char c) const;
-
-   private:
     bool _failed;
     pl::types::Token _failedToken;
 
@@ -56,6 +50,44 @@ class Lex {
     size_t _row, _column;
     std::string _tokenStringBuffer;
     pl::types::TYPES _currentTokenType;
+
+   private:
+    inline char _peekNext() const {
+        if (_input.size() > _index + 1)
+            return _input[_index + 1];
+        else
+            return EOF;
+    }
+    inline char _peek() const {
+        if (_input.size() > _index)
+            return _input[_index];
+        else
+            return EOF;
+    }
+    inline char _last() const {
+        if (_tokenStringBuffer.empty())
+            return EOF;
+        else
+            return _tokenStringBuffer[_tokenStringBuffer.length()];
+    }
+    inline char _first() const {
+        if (_tokenStringBuffer.empty())
+            return EOF;
+        else
+            return _tokenStringBuffer[0];
+    }
+    inline bool _isEOF(char c) const { return c == EOF; }
+    inline bool _isAlphabetOrUnderLine(char c) const {
+        return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_';
+    }
+    inline bool _isNumber(char c) const { return c >= '0' && c <= '9'; }
+    inline bool _isSymbol(char c) const {
+        return (c == pl::symbol::SYMBOL_ADD) ||
+               (c == pl::symbol::SYMBOL_ASSIGN);
+    }
+    inline bool _isKeyWordContains(char c) const {
+        return pl::symbol::SYMBOL_ECHO.starts_with(_tokenStringBuffer + c);
+    }
 
     enum class DFA_TYPE {
         /**

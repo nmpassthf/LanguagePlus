@@ -11,7 +11,7 @@ namespace pl::container {
 
 using ValueType = std::variant<size_t, std::string>;
 
-enum class ValueTypeIndex : size_t { SIZE_T_TYPE = 0, STRING_TYPE = 1 };
+enum class ValueTypeIndex : uint8_t { SIZE_T_TYPE = 0, STRING_TYPE = 1 };
 
 /**
  * @brief pl解释器的容器类型

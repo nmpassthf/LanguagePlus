@@ -224,39 +224,4 @@ string Lex::getErrorInfo() const {
     return errmsg;
 }
 
-char Lex::_peekNext() const {
-    if (_input.size() > _index + 1)
-        return _input[_index + 1];
-    else
-        return EOF;
-}
-char Lex::_peek() const {
-    if (_input.size() > _index)
-        return _input[_index];
-    else
-        return EOF;
-}
-char Lex::_last() const {
-    if (_tokenStringBuffer.empty())
-        return EOF;
-    else
-        return _tokenStringBuffer[_tokenStringBuffer.length()];
-}
-char Lex::_first() const {
-    if (_tokenStringBuffer.empty())
-        return EOF;
-    else
-        return _tokenStringBuffer[0];
-}
-bool Lex::_isEOF(char c) const { return c == EOF; }
-bool Lex::_isAlphabetOrUnderLine(char c) const {
-    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_';
-}
-bool Lex::_isNumber(char c) const { return c >= '0' && c <= '9'; }
-bool Lex::_isSymbol(char c) const {
-    return (c == pl::symbol::SYMBOL_ADD) || (c == pl::symbol::SYMBOL_ASSIGN);
-}
-bool Lex::_isKeyWordContains(char c) const {
-    return pl::symbol::SYMBOL_ECHO.starts_with(_tokenStringBuffer + c);
-}
 }  // namespace pl::lex
