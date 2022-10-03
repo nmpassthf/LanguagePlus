@@ -88,6 +88,9 @@ class Lex {
     inline bool _isKeyWordContains(char c) const {
         return pl::symbol::SYMBOL_ECHO.starts_with(_tokenStringBuffer + c);
     }
+    inline bool _isKeyWordEqual(std::string s) const {
+        return pl::symbol::SYMBOL_ECHO == s;
+    }
 
     enum class DFA_TYPE {
         /**

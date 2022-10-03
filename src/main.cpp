@@ -41,6 +41,5 @@ int main(int argc, char* argv[]) {
     // executer::Executer exec;
     // auto finalResult = exec.exec(parserResult);
     // qDebug() << QString::fromStdString(finalResult);
-
     return app.exec();
 }

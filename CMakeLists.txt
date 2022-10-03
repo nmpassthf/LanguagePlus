@@ -3,11 +3,15 @@ project(PlusLanguageInterpreter)
 
 set(DEBUG ON)
 
-# set(CMAKE_PREFIX_PATH D:\\Qt630STATIC\\lib\\cmake)
+set(CMAKE_PREFIX_PATH D:\\Qt630STATIC\\lib\\cmake)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_INCLUDE_PATH})
+
+string(TIMESTAMP BUILD_TIME %Y-%m-%d\ %H:%M:%S)
+set(VERSION 1.3.7)
+configure_file(include/config.h.in config.h)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -28,7 +32,7 @@ file(GLOB_RECURSE PlusLanguageInterpreter_SRCS
 )
 
 add_executable(PlusLanguageInterpreter 
-#    WIN32
+   WIN32
    resource.rc
    qrc.qrc
    ${CMAKE_INCLUDE_PATH}

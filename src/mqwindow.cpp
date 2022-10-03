@@ -13,6 +13,7 @@
 #include <QString>
 #include <string>
 
+#include "config.h"
 #include "pluslanguage.hpp"
 
 using namespace std;
@@ -20,11 +21,11 @@ using namespace pl;
 
 MainWindow::MainWindow(QWidget* parent)
     : QWidget(parent),
-      titleLabel(new QLabel("Language+ 语言解释器", this)),
+      titleLabel(new QLabel(QString("Language+ 语言解释器"), this)),
       textBrowser(new QTextBrowser(this)),
       showedLabel(new QTextEdit(this)),
       okBtn(new QPushButton("执行", this)) {
-    setWindowTitle("Language+");
+    setWindowTitle(QString("Language+  v") + VERSION);
 
     setWindowIcon(QIcon("://amamiya.ico"));
 
@@ -38,7 +39,7 @@ MainWindow::MainWindow(QWidget* parent)
     ((QVBoxLayout*)(layout()))->setStretch(1, 1);
     ((QVBoxLayout*)(layout()))->setStretch(2, 3);
 
-    titleLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
+    titleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     textBrowser->setReadOnly(false);
     showedLabel->setMinimumHeight(50);
     showedLabel->setFrameShape(QFrame::StyledPanel);

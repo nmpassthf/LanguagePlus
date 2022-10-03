@@ -152,7 +152,10 @@ std::vector<pl::types::Token> Lex::start() {
                     setDFA(DFA_TYPE::ALPHABET_WITH_NUM);
                     accept();
                 } else {
-                    setDFA(DFA_TYPE::END_ECHO);
+                    if (_isKeyWordEqual(_tokenStringBuffer))
+                        setDFA(DFA_TYPE::END_ECHO);
+                    else
+                        setDFA(DFA_TYPE::END_ID);
                 }
             } break;
 
