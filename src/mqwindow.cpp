@@ -77,5 +77,7 @@ void MainWindow::runCode() {
                              QString::fromLocal8Bit(e.what()));
 
         qDebug() << e.what();
+    } catch (...) {
+        showedLabel->setText("catch unhandled Error!");
     }
 }

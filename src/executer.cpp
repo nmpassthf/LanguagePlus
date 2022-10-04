@@ -64,10 +64,10 @@ std::string Executer::exec(const std::vector<pl::types::Command>& commands) {
                                 cmd.operationNumberDest.second,
                                 stoull(cmd.operationNumberSrc.second)));
                         } else {
-                            kv.insert(
-                                makePair(cmd.operationNumberDest.second,
-                                         get<size_t>(kv[getFinalId(
-                                             cmd.operationNumberSrc)])));
+                            kv.insert(makePair(
+                                cmd.operationNumberDest.second,
+                                get<size_t>(
+                                    kv[getFinalId(cmd.operationNumberSrc)])));
                         }
                     }
                     break;
