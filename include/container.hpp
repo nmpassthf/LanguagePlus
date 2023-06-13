@@ -9,6 +9,10 @@
  */
 namespace pl::container {
 
+/**
+ * @brief size_t或者std::string的variant
+ * pl::container中的值类型
+ */
 using ValueType = std::variant<size_t, std::string>;
 
 enum class ValueTypeIndex : uint8_t { SIZE_T_TYPE = 0, STRING_TYPE = 1 };

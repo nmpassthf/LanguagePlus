@@ -51,10 +51,12 @@ MainWindow::MainWindow(QWidget* parent)
 }
 MainWindow::~MainWindow() {}
 
+
 void MainWindow::runCode() {
     try {
         string src = textBrowser->toPlainText().toStdString();
         lex::Lex lex(src);
+
         auto lexResult = lex.start();
         if (!lex.good()) {
             showedLabel->setText(QString::fromStdString(lex.getErrorInfo()));
@@ -71,6 +73,7 @@ void MainWindow::runCode() {
         executer::Executer exec;
         auto finalResult = exec.exec(parserResult);
         showedLabel->setText(QString::fromStdString(finalResult));
+
 
     } catch (const std::exception& e) {
         showedLabel->setText("catch std::exception! what()->" +
